@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:21.04
 
 # Define variables.
 ARG GOVERSION=1.15.15
@@ -7,7 +7,7 @@ ARG ARCH=amd64
 # Download development environment.
 RUN apt-get update && \
     apt-get install -y \
-        libbpfcc-dev \
+        libbpf-dev \
         make \
         clang \
         llvm \
