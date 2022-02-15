@@ -2,13 +2,19 @@
 #include "hello.bpf.h"
 
 // Example: tracing a message on a kprobe
-SEC("kprobe/sys_execve")
-int hello(void *ctx)
+SEC("kprobe/sys_getdents64")
+int block(void *ctx)
 {
-    bpf_printk("I'm alive!");
+    char comm[16 /*TASK_COMM_LEN*/];
+    bpf_get_current_comm(&comm, sizeof(comm));
+    if (__builtin_memcmp(comm, "bash", 4) == 0) {
+        bpf_printk("%s was blocked", comm);
+        bpf_override_return(ctx, -1);
+    } else {
+        bpf_printk("%s was allowed", comm);
+    }
     return 0;
 }
-
 // Example of passing data using a perf map
 // Similar to bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count();}'
 BPF_PERF_OUTPUT(events)
