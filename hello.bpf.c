@@ -7,7 +7,7 @@ int block(void *ctx)
 {
     char comm[16 /*TASK_COMM_LEN*/];
     bpf_get_current_comm(&comm, sizeof(comm));
-    if (__builtin_memcmp(comm, "bash", 4) == 0) {
+    if (__builtin_memcmp(comm, "ls", 2) == 0) {
         bpf_printk("%s was blocked", comm);
         bpf_override_return(ctx, -1);
     } else {
